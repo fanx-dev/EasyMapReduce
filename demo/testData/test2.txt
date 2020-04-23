@@ -1,0 +1,5 @@
+a	apple
+b	big
+b	bug
+c	cut
+e	eye
