@@ -22,8 +22,10 @@ class Context {
   ** job name
   Str name { private set }
 
+  Str hadoopHome := "HADOOP_HOME"
+
   ** A light-weight(delete src and swt.jar) Fantom distro to be upload to Hadoop
-  Uri? fanHome := Context#.pod.config("fanHome", "fantom/").toUri
+  Uri? fanHome
 
   ** args for hadoop job. setting by -hadoop command arg
   Str[] hadoopArgs := [,]
@@ -79,10 +81,22 @@ class Context {
 
     f := tempDir.toFile.create
 
-    //check fanHome
-    fanDir := File(fanHome)
-    if (!isDebug && !fanDir.exists) {
-      throw ArgErr("Not config fanHome:$fanHome to upload")
+    fanHomeStr := Context#.pod.config("fanHome")
+    if (fanHomeStr == null) {
+      fanHome = Env.cur.homeDir.uri
+    }
+    else {
+      fanHome = fanHomeStr.toUri
+      //check fanHome
+      fanDir := File(fanHome)
+      if (!isDebug && !fanDir.exists) {
+        throw ArgErr("Not config fanHome:$fanHome to upload")
+      }
+    }
+
+    HADOOP_HOME := Env.cur.vars.get("HADOOP_HOME")
+    if (HADOOP_HOME != null) {
+      hadoopHome = HADOOP_HOME
     }
   }
 
@@ -90,11 +104,7 @@ class Context {
   Void deleteDir(Uri uri) {
     if (!isClient) return
     if (runMode == 0) {
-      HADOOP_HOME := Env.cur.vars.get("HADOOP_HOME")
-      if (HADOOP_HOME == null) {
-        throw Err("required env var HADOOP_HOME")
-      }
-      try Process("$HADOOP_HOME/bin/hadoop fs -rmr $uri".split(' ')).run.join
+      try Process("$hadoopHome/bin/hadoop fs -rmr $uri".split(' ')).run.join
       catch (Err e) e.trace
     } else {
       uri.toFile.delete

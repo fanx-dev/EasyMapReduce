@@ -19,11 +19,7 @@ fan wordCount.fan
 ```
 
 #### Config
-Config fantom runtime to upload.
-fantom/etc/easyMapReduce/config.props:
-```
-fanHome=/your_path/fantom
-```
+set 'HADOOP_HOME' env vars
 
 #### Debug
 Running in a local simulation env.

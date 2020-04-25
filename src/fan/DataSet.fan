@@ -133,11 +133,7 @@ class DataSet {
         cmd = ["cat", outPath]
     }
     else {
-        HADOOP_HOME := Env.cur.vars.get("HADOOP_HOME")
-        if (HADOOP_HOME == null) {
-            HADOOP_HOME = "/usr/bin/hadoop/software/hadoop"
-        }
-        hadoop := "$HADOOP_HOME/bin/hadoop"
+        hadoop := "$ctx.hadoopHome/bin/hadoop"
         cmd = [hadoop, "fs", "-cat", outPath+"/*"]
     }
 

@@ -40,15 +40,7 @@ internal class ClientJob : Job {
     if (isDone) return true
     parent?.run
 
-    HADOOP_HOME := Env.cur.vars.get("HADOOP_HOME")
-    if (HADOOP_HOME == null) {
-      if (enable)
-        throw Err("required env var HADOOP_HOME")
-      else
-        HADOOP_HOME = "/usr/bin/hadoop/software/hadoop"
-    }
-
-    cs := "$HADOOP_HOME/bin/hadoop jar $HADOOP_HOME/contrib/streaming/hadoop-streaming.jar"
+    cs := "$ctx.hadoopHome/bin/hadoop jar $ctx.hadoopHome/contrib/streaming/hadoop-streaming.jar"
     cmd := cs.split(' ')
 
     if (mapSteps.first?.compression != null) {
